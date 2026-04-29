@@ -357,11 +357,37 @@ async function submitContact(e){
 // ═══════════════════════════════
 // NEWSLETTER
 // ═══════════════════════════════
-function submitNewsletter(e){
+async function submitNewsletter(e){
   e.preventDefault();
-  document.getElementById('nl-ok').style.display='block';
-  document.getElementById('nl-email').value='';
-  setTimeout(()=>document.getElementById('nl-ok').style.display='none',5000);
+
+  const ok = document.getElementById('nl-ok');
+  const emailInput = document.getElementById('nl-email');
+  const email = emailInput.value.trim();
+
+  try {
+    const res = await fetch("https://euttyx-systems-backend.onrender.com/newsletter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      ok.style.display = 'block';
+      emailInput.value = '';
+
+      setTimeout(() => ok.style.display = 'none', 5000);
+    } else {
+      alert("Subscription failed");
+    }
+
+  } catch (err) {
+    console.log(err);
+    alert("Server error");
+  }
 }
 
 const ADMIN_KEY = "euttyx-admin";
