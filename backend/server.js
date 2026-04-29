@@ -11,33 +11,39 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 app.use(cors());
 app.use(express.json());
 
-// CONTACT ROUTE
 app.post("/contact", async (req, res) => {
-  try {
-    const { first_name, last_name, email, phone, subject, message } = req.body;
+  const { first_name, last_name, email, subject, message } = req.body;
 
+  if (!first_name || !last_name || !email || !subject || !message) {
+    return res.status(400).json({
+      success: false,
+      error: "All fields are required"
+    });
+  }
+
+  try {
     await resend.emails.send({
       from: "EuttyX <onboarding@resend.dev>",
-      to: 'euttyvirtual@gmail.com',
-      subject: subject || "New Contact Message",
+      to: "euttyvirtual@gmail.com",
+      subject: `📩 ${subject} - ${first_name} ${last_name}`,
       html: `
         <h2>New Message from EuttyX</h2>
         <p><b>Name:</b> ${first_name} ${last_name}</p>
         <p><b>Email:</b> ${email}</p>
-        <p><b>Phone:</b> ${phone}</p>
         <p><b>Message:</b><br>${message}</p>
-      `,
+      `
     });
 
-    res.json({ success: true, message: "Email sent" });
+    res.json({ success: true });
 
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, error: "Failed to send message" });
+    res.status(500).json({ success: false });
   }
 });
 
-// START SERVER
-app.listen(3000, () => {
-  console.log("EuttyX backend running on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`EuttyX backend running on port ${PORT}`);
 });
