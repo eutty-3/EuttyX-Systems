@@ -140,14 +140,24 @@ function techGuess(url){
   return ['HTML5','CSS3','JavaScript'];
 }
 
-function emojiForUrl(url){
-  const u=url.toLowerCase();
-  if(u.includes('law')||u.includes('legal')) return '⚖️';
-  if(u.includes('shop')||u.includes('store')) return '🛍️';
-  if(u.includes('food')||u.includes('restaurant')) return '🍽️';
-  if(u.includes('photo')||u.includes('studio')) return '📷';
-  if(u.includes('tech')||u.includes('dev')) return '💻';
-  return ['🌐','🚀','✨','🎨','⚡'][Math.floor(Math.random()*5)];
+function iconForUrl(url){
+  const u = url.toLowerCase();
+
+  if (u.includes('law') || u.includes('legal')) return 'fa-scale-balanced';
+  if (u.includes('shop') || u.includes('store')) return 'fa-cart-shopping';
+  if (u.includes('food') || u.includes('restaurant')) return 'fa-utensils';
+  if (u.includes('photo') || u.includes('studio')) return 'fa-camera-retro';
+  if (u.includes('tech') || u.includes('dev')) return 'fa-code';
+
+  const fallback = [
+    'fa-globe',
+    'fa-rocket',
+    'fa-wand-magic-sparkles',
+    'fa-palette',
+    'fa-bolt'
+  ];
+
+  return fallback[Math.floor(Math.random() * fallback.length)];
 }
 
 function renderProjects(){
