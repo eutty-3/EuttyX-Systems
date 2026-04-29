@@ -22,9 +22,9 @@ app.use((req, res, next) => {
 
 /* ---------------- CONTACT ROUTE ---------------- */
 app.post('/api/contact', async (req, res) => {
-  const { first_name, last_name, email, subject, message } = req.body;
+  const { first_name, last_name, email, phone, subject, message } = req.body;
 
-  if (!first_name || !last_name || !email || !subject || !message) {
+  if (!first_name || !last_name || !email || !phone || !subject || !message) {
     return res.status(400).json({
       success: false,
       error: 'All fields are required'
