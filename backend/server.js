@@ -66,3 +66,27 @@ app.post('/api/contact', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
+/* ---------------- NEWSLETTER ---------------- */
+let subscribers = [];
+
+app.post("/newsletter", (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ success: false });
+  }
+
+  const exists = subscribers.includes(email);
+  if (exists) {
+    return res.json({ success: true, message: "Already subscribed" });
+  }
+
+  subscribers.push(email);
+
+  console.log("New subscriber:", email);
+
+  res.json({ success: true });
+});
+
