@@ -1,49 +1,68 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import { Resend } from "resend";
-
-dotenv.config();
+require('dotenv').config();
+const express = require('express');
+const path = require('path');
+const { Resend } = require('resend');
 
 const app = express();
+
+/* ---------------- CONFIG ---------------- */
+const PORT = process.env.PORT || 3000;
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-app.use(cors());
+/* ---------------- MIDDLEWARE ---------------- */
 app.use(express.json());
 
-app.post("/contact", async (req, res) => {
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
+/* ---------------- CONTACT ROUTE ---------------- */
+app.post('/api/contact', async (req, res) => {
   const { first_name, last_name, email, subject, message } = req.body;
 
   if (!first_name || !last_name || !email || !subject || !message) {
     return res.status(400).json({
       success: false,
-      error: "All fields are required"
+      error: 'All fields are required'
     });
   }
 
   try {
-    await resend.emails.send({
-      from: "EuttyX <onboarding@resend.dev>",
-      to: "euttyvirtual@gmail.com",
-      subject: `📩 ${subject} - ${first_name} ${last_name}`,
+    const result = await resend.emails.send({
+      from: 'my web<onboarding@resend.dev>',
+      to: 'ondarigwaro@gmail.com',
+      subject: `📩 ${subject} - from ${first_name} ${last_name}`,
       html: `
-        <h2>New Message from EuttyX</h2>
+        <h2>New Contact Message</h2>
         <p><b>Name:</b> ${first_name} ${last_name}</p>
         <p><b>Email:</b> ${email}</p>
-        <p><b>Message:</b><br>${message}</p>
+        <p><b>Subject:</b> ${subject}</p>
+        <p><b>Message:</b></p>
+        <p>${message}</p>
       `
     });
 
-    res.json({ success: true });
+    console.log('Email sent:', result);
+
+    return res.json({
+      success: true,
+      message: 'Message sent successfully'
+    });
 
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false });
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to send message'
+    });
   }
 });
 
-const PORT = process.env.PORT || 3000;
-
+/* ---------------- START ---------------- */
 app.listen(PORT, () => {
-  console.log(`EuttyX backend running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
