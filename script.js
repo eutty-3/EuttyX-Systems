@@ -319,7 +319,7 @@ async function submitContact(e){
   };
 
   try {
-    const res = await fetch("https://euttyx-systems-backend.onrender.com/contact", {
+    const res = await fetch("https://euttyx-systems-backend.onrender.com/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
